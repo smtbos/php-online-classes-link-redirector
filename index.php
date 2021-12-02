@@ -3,8 +3,20 @@
 include("./config.php");
 
 // $time = strtotime("-1 hours");
+$today_key = "A".date("Ymd");
+if(!isset($_COOKIE[$today_key])){
+    $stmt = $con->prepare("INSERT INTO `visits`(`v_date`) VALUES (?)");
+    $stmt->execute([$today_key]);
+    $row_id = $con->lastInsertId();
 
-if (isset($_GET["class"])) {
+    setcookie($today_key, $row_id, strtotime("today")+86400);
+}else{
+    $stmt = $con->prepare("UPDATE `visits` SET `v_status` =  `v_status`+1 WHERE `v_id` = ?");
+    $stmt->execute([$_COOKIE[$today_key]]);
+}
+
+$class = 1;
+if (isset($_GET["class"]) || true) {
     $time = time();
     $current_hours = date("H", $time);
     $current_minutes = date("i", $time);
@@ -15,25 +27,25 @@ if (isset($_GET["class"])) {
     if (isset($_GET["ct"])) {
         $current_time = $_GET["ct"];
     }
-    if ($current_time >= 925 && $current_time <= 1025) {
+    if ($current_time >= 925 && $current_time <= 1024) {
         $current_lecture_number = 0;
-    } else if ($current_time >= 1025 && $current_time <= 1125) {
+    } else if ($current_time >= 1025 && $current_time <= 1124) {
         $current_lecture_number = 1;
-    } else if ($current_time >= 1155 && $current_time <= 1255) {
+    } else if ($current_time >= 1155 && $current_time <= 1254) {
         $current_lecture_number = 2;
-    } else if ($current_time >= 1255 && $current_time <= 1355) {
+    } else if ($current_time >= 1255 && $current_time <= 1354) {
         $current_lecture_number = 3;
     }
 
     $current_lecture_subject = null;
 
     $stmt = $con->prepare("SELECT * FROM `timetable` WHERE `tt_class` = ? AND `tt_day` = ? AND `tt_rank` = ?");
-    $stmt->execute([$_GET["class"], $current_day, $current_lecture_number]);
+    $stmt->execute([$class, $current_day, $current_lecture_number]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $stmt = $con->prepare("SELECT * FROM `timetable` WHERE `tt_class` = ? AND `tt_day` = ? AND `tt_rank` = ?");
 
     $stmt = $con->prepare("SELECT * FROM `reschedules` WHERE `rs_class` = ? AND `rs_day` = ? AND `rs_rank` = ?");
-    $stmt->execute([$_GET["class"], $current_day, $current_lecture_number]);
+    $stmt->execute([$class, $current_day, $current_lecture_number]);
     $rs_row = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($row) {
         $current_lecture_subject = $row["tt_subject"];
@@ -59,7 +71,7 @@ if (isset($_GET["class"])) {
 
 <body>
     <?php
-    if (isset($_REQUEST["class"])) {
+    if (isset($class)) {
     ?>
         <div class="container">
             <div class="row">
@@ -69,7 +81,6 @@ if (isset($_GET["class"])) {
                         $stmt = $con->prepare("SELECT * FROM `subjects` WHERE `s_id` = ?");
                         $stmt->execute([$current_lecture_subject]);
                         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                        print_r($row);
                     ?>
                         <h2 class="mt-4 text-secondary">(<?php echo $row["s_short"]; ?>)</h2>
                         <h2 class="mt-3"><?php echo $row["s_subject"]; ?></h2>

@@ -31,10 +31,21 @@ if (isset($_REQUEST["update_lec"])) {
     echo "OK";
     exit();
 }
+if (isset($_REQUEST["update_color"])) {
+    $rs = $_REQUEST["rs"];
+    $color = $_REQUEST["color"];
+    $stmt = $con->prepare("UPDATE `reschedules` SET `rs_color` = ? WHERE `rs_id` = ?");
+    $stmt->execute([$color, $rs]);
+    echo "OK";
+    exit();
+}
 if (isset($_REQUEST["rs_add"])) {
+    print_r($_POST);
+    exit();
     $class = get_not_empty($_REQUEST["class"]);
     $day = get_not_empty($_REQUEST["rs_day"]);
     $rank = get_not_empty($_REQUEST["rs_rank"]);
+    $color = get_not_empty($_REQUEST["rs_color"]);
     $subject = $_REQUEST["rs_subject"];
     if ($subject == "null" || $subject == 0) {
         $subject = NULL;
@@ -111,7 +122,7 @@ if (isset($_REQUEST["rs_del"])) {
 
         foreach ($reschedules as $reschedule) {
             $tt[$reschedule["rs_day"]][$reschedule["rs_rank"]] = $reschedule["rs_subject"];
-            $rss[$reschedule["rs_day"]][$reschedule["rs_rank"]] = true;
+            $rss[$reschedule["rs_day"]][$reschedule["rs_rank"]] = array("color" => $reschedule["rs_color"], "id" => $reschedule["rs_id"]);
         }
     ?>
         <div class="container">
@@ -138,9 +149,9 @@ if (isset($_REQUEST["rs_del"])) {
                                 ?>
                                     <td>
 
-                                        <select class="form-select lec_select  <?php if (isset($rss[$i][$j])) {
-                                                                                    echo "reschedule";
-                                                                                } ?>" data-day="<?php echo $i; ?>" data-rank="<?php echo $j; ?>">
+                                        <select class="form-select lec_select" <?php if (isset($rss[$i][$j])) {
+                                                                                    echo "style='background-color:" . $rss[$i][$j]["color"] . ";' id='rs-" . $rss[$i][$j]["id"] . "'";
+                                                                                } ?> data-day="<?php echo $i; ?>" data-rank="<?php echo $j; ?>">
                                             <option value="null">None</option>
                                             <?php
                                             foreach ($subjects as $subject) {
@@ -173,7 +184,8 @@ if (isset($_REQUEST["rs_del"])) {
                                     <div class="col-3">Day</div>
                                     <div class="col-3">Lecture</div>
                                     <div class="col-3">Subject</div>
-                                    <div class="col-3">Remove</div>
+                                    <div class="col-1">C</div>
+                                    <div class="col-2">Remove</div>
                                 </div>
                             </div>
                             <?php
@@ -194,7 +206,10 @@ if (isset($_REQUEST["rs_del"])) {
                                                                                     echo "None";
                                                                                 } ?>">
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-1">
+                                            <input type="color" class="form-control form-control-color rs_color" data-rs="<?php echo $reschedule["rs_id"]; ?>" value="<?php echo $reschedule["rs_color"]; ?>">
+                                        </div>
+                                        <div class="col-2">
                                             <a href="index.php?class=<?php echo $_REQUEST["class"]; ?>&rs_del=<?php echo $reschedule["rs_id"]; ?>"><button class="btn btn-danger w-100">Remove</button></a>
                                         </div>
                                     </div>
@@ -243,7 +258,11 @@ if (isset($_REQUEST["rs_del"])) {
                                     ?>
                                 </select>
                             </div>
-                            <div class="col-3">
+                            <div class="col-1">
+                                <label>Color</label>
+                                <input type="color" name="rs_color" class="form-control form-control-color" value="#ced4da">
+                            </div>
+                            <div class="col-2">
                                 <input type="submit" name="rs_add" value="Add RS" class="btn btn-success mt-4 w-100">
                             </div>
                         </div>
@@ -296,6 +315,17 @@ if (isset($_REQUEST["rs_del"])) {
                         subject: $(this).val()
                     });
                 });
+                $(".rs_color").change(function() {
+                    var rs_id = $(this).data("rs");
+                    var rs_color = $(this).val();
+                    $.post("index.php", {
+                        update_color: 1,
+                        rs: rs_id,
+                        color: rs_color
+                    }, function(data) {
+                        $("#rs-" + rs_id).css("background-color", rs_color);
+                    });
+                })
             })
         </script>
     <?php
