@@ -40,19 +40,18 @@ if (isset($_REQUEST["update_color"])) {
     exit();
 }
 if (isset($_REQUEST["rs_add"])) {
-    print_r($_POST);
-    exit();
     $class = get_not_empty($_REQUEST["class"]);
     $day = get_not_empty($_REQUEST["rs_day"]);
     $rank = get_not_empty($_REQUEST["rs_rank"]);
-    $color = get_not_empty($_REQUEST["rs_color"]);
+    $color = $_REQUEST["rs_color"];
+    $note = $_REQUEST["rs_note"];
     $subject = $_REQUEST["rs_subject"];
     if ($subject == "null" || $subject == 0) {
         $subject = NULL;
     }
-    $stmt = $con->prepare("INSERT INTO `reschedules`(`rs_class`, `rs_day`, `rs_rank`, `rs_subject`) VALUES (?,?,?,?)");
+    $stmt = $con->prepare("INSERT INTO `reschedules`(`rs_class`, `rs_day`, `rs_rank`, `rs_subject`, `rs_color`, `rs_note`) VALUES (?,?,?,?,?,?)");
     if ($class >= 0 && $day >= 0  &&  $rank >= 0) {
-        $stmt->execute([$class, $day, $rank, $subject]);
+        $stmt->execute([$class, $day, $rank, $subject, $color, $note]);
     }
     header("location:index.php?class=" . $class);
     exit();
@@ -122,7 +121,7 @@ if (isset($_REQUEST["rs_del"])) {
 
         foreach ($reschedules as $reschedule) {
             $tt[$reschedule["rs_day"]][$reschedule["rs_rank"]] = $reschedule["rs_subject"];
-            $rss[$reschedule["rs_day"]][$reschedule["rs_rank"]] = array("color" => $reschedule["rs_color"], "id" => $reschedule["rs_id"]);
+            $rss[$reschedule["rs_day"]][$reschedule["rs_rank"]] = array("color" => $reschedule["rs_color"], "id" => $reschedule["rs_id"], "note" => $reschedule["rs_note"]);
         }
     ?>
         <div class="container">
@@ -150,7 +149,7 @@ if (isset($_REQUEST["rs_del"])) {
                                     <td>
 
                                         <select class="form-select lec_select" <?php if (isset($rss[$i][$j])) {
-                                                                                    echo "style='background-color:" . $rss[$i][$j]["color"] . ";' id='rs-" . $rss[$i][$j]["id"] . "'";
+                                                                                    echo "style='background-color:" . $rss[$i][$j]["color"] . ";' id='rs-" . $rss[$i][$j]["id"] . "' data-bs-toggle='tooltip' data-bs-placement='bottom' title='" . $rss[$i][$j]["note"] . "' ";
                                                                                 } ?> data-day="<?php echo $i; ?>" data-rank="<?php echo $j; ?>">
                                             <option value="null">None</option>
                                             <?php
@@ -181,9 +180,10 @@ if (isset($_REQUEST["rs_del"])) {
                         <div class="row pb-5">
                             <div class="col-12">
                                 <div class="row pb-2 text-center" style="font-weight: bold;">
-                                    <div class="col-3">Day</div>
-                                    <div class="col-3">Lecture</div>
-                                    <div class="col-3">Subject</div>
+                                    <div class="col-2">Day</div>
+                                    <div class="col-2">Lecture</div>
+                                    <div class="col-2">Subject</div>
+                                    <div class="col-3">Note</div>
                                     <div class="col-1">C</div>
                                     <div class="col-2">Remove</div>
                                 </div>
@@ -193,18 +193,21 @@ if (isset($_REQUEST["rs_del"])) {
                             ?>
                                 <div class="col-12 pb-3">
                                     <div class="row">
-                                        <div class="col-3">
+                                        <div class="col-2">
                                             <input class="form-control" value="<?php echo $days[$reschedule["rs_day"]]; ?>">
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-2">
                                             <input class="form-control" value="<?php echo $lectures[$reschedule["rs_rank"]]; ?>">
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-2">
                                             <input class="form-control" value="<?php if ($reschedule["rs_subject"] != NULL) {
                                                                                     echo $subjects[$reschedule["rs_subject"]]["s_short"];
                                                                                 } else {
                                                                                     echo "None";
                                                                                 } ?>">
+                                        </div>
+                                        <div class="col-3">
+                                            <input type="text" class="form-control rs_color" data-rs="<?php echo $reschedule["rs_id"]; ?>" value="<?php echo $reschedule["rs_note"]; ?>">
                                         </div>
                                         <div class="col-1">
                                             <input type="color" class="form-control form-control-color rs_color" data-rs="<?php echo $reschedule["rs_id"]; ?>" value="<?php echo $reschedule["rs_color"]; ?>">
@@ -223,7 +226,7 @@ if (isset($_REQUEST["rs_del"])) {
                     ?>
                     <form action="index.php?class=<?php echo $_REQUEST["class"]; ?>" method="post">
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col-2">
                                 <label>Select Day</label>
                                 <select class="form-select" name="rs_day" required>
                                     <option value="">--Select--</option>
@@ -235,7 +238,7 @@ if (isset($_REQUEST["rs_del"])) {
                                     <option value="5">Saturday</option>
                                 </select>
                             </div>
-                            <div class="col-3">
+                            <div class="col-2">
                                 <label>Select Lecture</label>
                                 <select class="form-select" name="rs_rank" required>
                                     <option value="">--Select--</option>
@@ -245,7 +248,7 @@ if (isset($_REQUEST["rs_del"])) {
                                     <option value="3">Lec 4</option>
                                 </select>
                             </div>
-                            <div class="col-3">
+                            <div class="col-2">
                                 <label>Select Subject</label>
                                 <select class="form-select" name="rs_subject">
                                     <option value="null">--Select--</option>
@@ -257,6 +260,10 @@ if (isset($_REQUEST["rs_del"])) {
                                     }
                                     ?>
                                 </select>
+                            </div>
+                            <div class="col-3">
+                                <label>Note</label>
+                                <input type="test" name="rs_note" class="form-control">
                             </div>
                             <div class="col-1">
                                 <label>Color</label>
@@ -298,12 +305,17 @@ if (isset($_REQUEST["rs_del"])) {
     <?php
     }
     ?>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.min.js"></script>
     <?php
     if (isset($_REQUEST["class"])) {
     ?>
         <script>
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            console.log(tooltipTriggerList);
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
             $(document).ready(function() {
                 var myClass = <?php echo $_REQUEST["class"]; ?>;
                 $(".lec_select").change(function() {
