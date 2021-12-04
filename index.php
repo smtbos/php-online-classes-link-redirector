@@ -104,7 +104,7 @@ if (isset($_GET["class"]) || true) {
                                 var cc = parseInt(cn.innerHTML);
                                 cc -= 1;
                                 if (cc <= 0) {
-                                    //location.href = '<?php echo $row["s_link"]; ?>';
+                                    location.href = '<?php echo $row["s_link"]; ?>';
                                 } else {
                                     cn.innerHTML = cc;
                                 }
