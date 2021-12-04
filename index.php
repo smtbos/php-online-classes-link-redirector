@@ -3,14 +3,14 @@
 include("./config.php");
 
 // $time = strtotime("-1 hours");
-$today_key = "A".date("Ymd");
-if(!isset($_COOKIE[$today_key])){
+$today_key = "A" . date("Ymd");
+if (!isset($_COOKIE[$today_key])) {
     $stmt = $con->prepare("INSERT INTO `visits`(`v_date`) VALUES (?)");
     $stmt->execute([$today_key]);
     $row_id = $con->lastInsertId();
 
-    setcookie($today_key, $row_id, strtotime("today")+86400);
-}else{
+    setcookie($today_key, $row_id, strtotime("today") + 86400);
+} else {
     $stmt = $con->prepare("UPDATE `visits` SET `v_status` =  `v_status`+1 WHERE `v_id` = ?");
     $stmt->execute([$_COOKIE[$today_key]]);
 }
@@ -52,6 +52,7 @@ if (isset($_GET["class"]) || true) {
     }
 
     if ($rs_row) {
+        $rs_note = $rs_row["rs_note"];
         $current_lecture_subject = $rs_row["rs_subject"];
     }
 }
@@ -85,17 +86,26 @@ if (isset($_GET["class"]) || true) {
                         <h2 class="mt-4 text-secondary">(<?php echo $row["s_short"]; ?>)</h2>
                         <h2 class="mt-3"><?php echo $row["s_subject"]; ?></h2>
                         <h4>(<?php echo $row["s_faculty"]; ?>)</h4>
+                        <?php
+                        if (isset($rs_note) && strlen($rs_note) > 0) {
+                        ?>
+                            <h5 class="d-flex justify-content-center">
+                                <div style="max-width: 250px;"> <u class="text-danger">Note : </u> <br><?php echo $rs_note; ?></div>
+                            </h5>
+                        <?php
+                        }
+                        ?>
                         <a href="<?php echo $row["s_link"]; ?>">Google Meet Link</a>
                         <br>
                         <span>You Will Redirect in <span id="count">5</span> Seconds</span>
                         <script>
-                            setInterval(function(){
+                            setInterval(function() {
                                 var cn = document.getElementById("count");
                                 var cc = parseInt(cn.innerHTML);
-                                cc-=1;
-                                if(cc <= 0){
+                                cc -= 1;
+                                if (cc <= 0) {
                                     //location.href = '<?php echo $row["s_link"]; ?>';
-                                }else{
+                                } else {
                                     cn.innerHTML = cc;
                                 }
                             }, 1000);
@@ -104,6 +114,15 @@ if (isset($_GET["class"]) || true) {
                     } else {
                     ?>
                         <h1 class="text-center pt-5">No Lectures Currently</h1>
+                        <?php
+                        if (isset($rs_note) && strlen($rs_note) > 0) {
+                        ?>
+                            <h5 class="d-flex justify-content-center">
+                                <div style="max-width: 250px;"> <u class="text-danger">Note : </u> <br><?php echo $rs_note; ?></div>
+                            </h5>
+                        <?php
+                        }
+                        ?>
                     <?php
                     }
                     ?>

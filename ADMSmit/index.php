@@ -39,6 +39,14 @@ if (isset($_REQUEST["update_color"])) {
     echo "OK";
     exit();
 }
+if (isset($_REQUEST["update_note"])) {
+    $rs = $_REQUEST["rs"];
+    $note = $_REQUEST["note"];
+    $stmt = $con->prepare("UPDATE `reschedules` SET `rs_note` = ? WHERE `rs_id` = ?");
+    $stmt->execute([$note, $rs]);
+    echo "OK";
+    exit();
+}
 if (isset($_REQUEST["rs_add"])) {
     $class = get_not_empty($_REQUEST["class"]);
     $day = get_not_empty($_REQUEST["rs_day"]);
@@ -207,7 +215,7 @@ if (isset($_REQUEST["rs_del"])) {
                                                                                 } ?>">
                                         </div>
                                         <div class="col-3">
-                                            <input type="text" class="form-control rs_color" data-rs="<?php echo $reschedule["rs_id"]; ?>" value="<?php echo $reschedule["rs_note"]; ?>">
+                                            <input type="text" class="form-control rs_note" data-rs="<?php echo $reschedule["rs_id"]; ?>" value="<?php echo $reschedule["rs_note"]; ?>">
                                         </div>
                                         <div class="col-1">
                                             <input type="color" class="form-control form-control-color rs_color" data-rs="<?php echo $reschedule["rs_id"]; ?>" value="<?php echo $reschedule["rs_color"]; ?>">
@@ -337,7 +345,18 @@ if (isset($_REQUEST["rs_del"])) {
                     }, function(data) {
                         $("#rs-" + rs_id).css("background-color", rs_color);
                     });
-                })
+                });
+                $(".rs_note").change(function() {
+                    var rs_id = $(this).data("rs");
+                    var rs_note = $(this).val();
+                    $.post("index.php", {
+                        update_note: 1,
+                        rs: rs_id,
+                        note: rs_note
+                    }, function(data) {
+                        $("#rs-" + rs_id).attr("data-bs-original-title", rs_note);
+                    });
+                });
             })
         </script>
     <?php
