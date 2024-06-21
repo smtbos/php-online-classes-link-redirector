@@ -1,7 +1,5 @@
 <?php
-    
-// $con = new PDO("mysql:host=localhost;dbname=smtbos_link", "smit", "&tD9XpV44dvgkvex");
-$con = new PDO("mysql:host=localhost;dbname=link", "root", "");
+$con = new PDO("mysql:host=localhost;dbname=link", "root", "root");
 
 date_default_timezone_set("Asia/Kolkata");
 

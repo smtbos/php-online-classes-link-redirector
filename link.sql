@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 23, 2021 at 10:37 AM
--- Server version: 10.4.21-MariaDB
--- PHP Version: 7.4.23
+-- Host: localhost
+-- Generation Time: Jun 22, 2024 at 01:23 AM
+-- Server version: 10.6.16-MariaDB-0ubuntu0.22.04.1
+-- PHP Version: 8.1.2-1ubuntu2.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,7 +31,7 @@ CREATE TABLE `classes` (
   `c_id` int(11) NOT NULL,
   `c_name` varchar(100) NOT NULL,
   `c_status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `classes`
@@ -53,8 +53,17 @@ CREATE TABLE `reschedules` (
   `rs_day` int(11) NOT NULL,
   `rs_rank` int(11) NOT NULL,
   `rs_subject` int(11) DEFAULT NULL,
+  `rs_note` varchar(255) NOT NULL,
+  `rs_color` varchar(255) NOT NULL,
   `rs_status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reschedules`
+--
+
+INSERT INTO `reschedules` (`rs_id`, `rs_class`, `rs_day`, `rs_rank`, `rs_subject`, `rs_note`, `rs_color`, `rs_status`) VALUES
+(9, 2, 0, 2, 4, 'Fecture', '#0b85fe', 1);
 
 -- --------------------------------------------------------
 
@@ -69,7 +78,7 @@ CREATE TABLE `subjects` (
   `s_short` varchar(20) NOT NULL,
   `s_link` varchar(100) NOT NULL,
   `s_status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `subjects`
@@ -103,7 +112,7 @@ CREATE TABLE `timetable` (
   `tt_rank` int(11) NOT NULL,
   `tt_subject` int(11) DEFAULT NULL,
   `tt_status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `timetable`
@@ -134,30 +143,49 @@ INSERT INTO `timetable` (`tt_id`, `tt_class`, `tt_day`, `tt_rank`, `tt_subject`,
 (22, 1, 5, 1, 2, 1),
 (23, 1, 5, 2, 8, 1),
 (24, 1, 5, 3, 3, 1),
-(25, 2, 0, 0, NULL, 1),
-(26, 2, 0, 1, NULL, 1),
-(27, 2, 0, 2, NULL, 1),
-(28, 2, 0, 3, NULL, 1),
-(29, 2, 1, 0, NULL, 1),
-(30, 2, 1, 1, NULL, 1),
-(31, 2, 1, 2, NULL, 1),
-(32, 2, 1, 3, NULL, 1),
-(33, 2, 2, 0, NULL, 1),
-(34, 2, 2, 1, NULL, 1),
-(35, 2, 2, 2, NULL, 1),
-(36, 2, 2, 3, NULL, 1),
-(37, 2, 3, 0, NULL, 1),
-(38, 2, 3, 1, NULL, 1),
-(39, 2, 3, 2, NULL, 1),
-(40, 2, 3, 3, NULL, 1),
-(41, 2, 4, 0, NULL, 1),
-(42, 2, 4, 1, NULL, 1),
-(43, 2, 4, 2, NULL, 1),
+(25, 2, 0, 0, 1, 1),
+(26, 2, 0, 1, 1, 1),
+(27, 2, 0, 2, 2, 1),
+(28, 2, 0, 3, 5, 1),
+(29, 2, 1, 0, 3, 1),
+(30, 2, 1, 1, 5, 1),
+(31, 2, 1, 2, 5, 1),
+(32, 2, 1, 3, 10, 1),
+(33, 2, 2, 0, 8, 1),
+(34, 2, 2, 1, 6, 1),
+(35, 2, 2, 2, 3, 1),
+(36, 2, 2, 3, 8, 1),
+(37, 2, 3, 0, 4, 1),
+(38, 2, 3, 1, 6, 1),
+(39, 2, 3, 2, 6, 1),
+(40, 2, 3, 3, 10, 1),
+(41, 2, 4, 0, 5, 1),
+(42, 2, 4, 1, 7, 1),
+(43, 2, 4, 2, 8, 1),
 (44, 2, 4, 3, NULL, 1),
-(45, 2, 5, 0, NULL, 1),
-(46, 2, 5, 1, NULL, 1),
-(47, 2, 5, 2, NULL, 1),
-(48, 2, 5, 3, NULL, 1);
+(45, 2, 5, 0, 4, 1),
+(46, 2, 5, 1, 6, 1),
+(47, 2, 5, 2, 1, 1),
+(48, 2, 5, 3, 12, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `visits`
+--
+
+CREATE TABLE `visits` (
+  `v_id` int(11) NOT NULL,
+  `v_date` varchar(255) NOT NULL,
+  `v_status` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `visits`
+--
+
+INSERT INTO `visits` (`v_id`, `v_date`, `v_status`) VALUES
+(1, 'A20240622', 5);
 
 --
 -- Indexes for dumped tables
@@ -188,6 +216,12 @@ ALTER TABLE `timetable`
   ADD PRIMARY KEY (`tt_id`);
 
 --
+-- Indexes for table `visits`
+--
+ALTER TABLE `visits`
+  ADD PRIMARY KEY (`v_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -201,7 +235,7 @@ ALTER TABLE `classes`
 -- AUTO_INCREMENT for table `reschedules`
 --
 ALTER TABLE `reschedules`
-  MODIFY `rs_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `rs_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `subjects`
@@ -214,6 +248,12 @@ ALTER TABLE `subjects`
 --
 ALTER TABLE `timetable`
   MODIFY `tt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+
+--
+-- AUTO_INCREMENT for table `visits`
+--
+ALTER TABLE `visits`
+  MODIFY `v_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
