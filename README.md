@@ -1,5 +1,17 @@
-# Online classes linker.
+# PHP Online Classes Link Redirector
 
-### At time of Online MCA classes, I have to open the browser and type the URL of the class. So, I have created a this project to open the class url by just clicking on the link.
+## Overview
 
-### This has the reshduleing feature also. You can reschedule the class by submitting the required details. from admin panel(ADMSmit).
+The **PHP Online Classes Link Redirector** is a tool designed to simplify accessing online classes. Instead of manually typing URLs into your browser, this project allows you to open your class links with a single click. It also includes a feature for rescheduling classes, accessible via the admin panel.
+
+## Features
+
+- **Easy Access to Online Classes:** Quickly open your class URLs with a click.
+- **Class Rescheduling:** Administrators can reschedule classes by submitting the required details through the admin panel.
+
+## Installation
+
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/yourusername/php-online-classes-link-redirector.git
