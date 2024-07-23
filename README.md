@@ -15,3 +15,11 @@ The **Online Classes Link Redirector** is a tool designed to simplify accessing 
 
    ```bash
    git clone https://github.com/yourusername/php-online-classes-link-redirector.git
+
+## Screenshots
+
+#### User
+![User](images/user.png)
+
+#### Admin
+![Admin](images/admin.png)
