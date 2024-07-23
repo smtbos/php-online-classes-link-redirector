@@ -1,8 +1,8 @@
-# PHP Online Classes Link Redirector
+# Online Classes Link Redirector
 
 ## Overview
 
-The **PHP Online Classes Link Redirector** is a tool designed to simplify accessing online classes. Instead of manually typing URLs into your browser, this project allows you to open your class links with a single click. It also includes a feature for rescheduling classes, accessible via the admin panel.
+The **Online Classes Link Redirector** is a tool designed to simplify accessing online classes. Instead of manually typing URLs into your browser, this project allows you to open your class links with a single click. It also includes a feature for rescheduling classes, accessible via the admin panel.
 
 ## Features
 
